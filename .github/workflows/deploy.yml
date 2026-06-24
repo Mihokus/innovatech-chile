@@ -79,18 +79,24 @@ jobs:
               --name frontend \
               --restart unless-stopped \
               -p 80:80 \
-              -e BACKEND_DESPACHOS_HOST=${{ secrets.EC2_DESPACHOS_PRIVATE_IP }} \
-              -e BACKEND_VENTAS_HOST=${{ secrets.EC2_VENTAS_PRIVATE_IP }} \
+              -e BACKEND_DESPACHOS_HOST=10.0.133.70 \
+              -e BACKEND_VENTAS_HOST=10.0.149.255 \
               035167451253.dkr.ecr.us-east-1.amazonaws.com/innovatech/frontend:latest
             docker image prune -f
 
-      - name: Deploy Backend Despachos
+      - name: Deploy Backend Despachos via Bastion
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host:     ${{ secrets.EC2_DESPACHOS_HOST }}
-          username: ec2-user
-          key:      ${{ secrets.EC2_SSH_KEY }}
+          host:       ${{ secrets.EC2_FRONTEND_HOST }}
+          username:   ec2-user
+          key:        ${{ secrets.EC2_SSH_KEY }}
+          proxy_host: ${{ secrets.EC2_FRONTEND_HOST }}
+          proxy_user: ec2-user
+          proxy_key:  ${{ secrets.EC2_SSH_KEY }}
           script: |
+            ssh -o StrictHostKeyChecking=no \
+              -i ~/.ssh/innovatech-key.pem \
+              ec2-user@10.0.133.70 << 'ENDSSH'
             aws ecr get-login-password --region us-east-1 | \
               docker login --username AWS --password-stdin \
               035167451253.dkr.ecr.us-east-1.amazonaws.com
@@ -101,35 +107,7 @@ jobs:
               --name backend-despachos \
               --restart unless-stopped \
               -p 8081:8081 \
-              -e DB_ENDPOINT=${{ secrets.EC2_DB_PRIVATE_IP }} \
+              -e DB_ENDPOINT=10.0.148.238 \
               -e DB_PORT=3306 \
               -e DB_NAME=despachos_db \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              035167451253.dkr.ecr.us-east-1.amazonaws.com/innovatech/backend-despachos:latest
-            docker image prune -f
-
-      - name: Deploy Backend Ventas
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host:     ${{ secrets.EC2_VENTAS_HOST }}
-          username: ec2-user
-          key:      ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            aws ecr get-login-password --region us-east-1 | \
-              docker login --username AWS --password-stdin \
-              035167451253.dkr.ecr.us-east-1.amazonaws.com
-            docker pull 035167451253.dkr.ecr.us-east-1.amazonaws.com/innovatech/backend-ventas:latest
-            docker stop backend-ventas 2>/dev/null || true
-            docker rm backend-ventas 2>/dev/null || true
-            docker run -d \
-              --name backend-ventas \
-              --restart unless-stopped \
-              -p 8080:8080 \
-              -e DB_ENDPOINT=${{ secrets.EC2_DB_PRIVATE_IP }} \
-              -e DB_PORT=3306 \
-              -e DB_NAME=ventas_db \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              035167451253.dkr.ecr.us-east-1.amazonaws.com/innovatech/backend-ventas:latest
-            docker image prune -f
+              -e
