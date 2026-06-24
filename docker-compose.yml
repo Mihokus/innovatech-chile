@@ -1,0 +1,95 @@
+version: "3.8"
+
+services:
+
+  mysql-despachos:
+    image: mysql:8.0
+    container_name: mysql-despachos
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME_DESPACHOS}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql-despachos-data:/var/lib/mysql
+    networks:
+      - backend-net
+
+  mysql-ventas:
+    image: mysql:8.0
+    container_name: mysql-ventas
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME_VENTAS}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql-ventas-data:/var/lib/mysql
+    networks:
+      - backend-net
+
+  backend-despachos:
+    build:
+      context: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+      dockerfile: ../../back-despachos/Dockerfile
+    container_name: backend-despachos
+    restart: unless-stopped
+    environment:
+      DB_ENDPOINT: mysql-despachos
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME_DESPACHOS}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - mysql-despachos
+    networks:
+      - backend-net
+
+  backend-ventas:
+    build:
+      context: ./back-Ventas_SpringBoot/Springboot-API-REST
+      dockerfile: ../../back-ventas/Dockerfile
+    container_name: backend-ventas
+    restart: unless-stopped
+    environment:
+      DB_ENDPOINT: mysql-ventas
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME_VENTAS}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - mysql-ventas
+    networks:
+      - backend-net
+
+  frontend:
+    build:
+      context: ./front_despacho
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      BACKEND_DESPACHOS_HOST: backend-despachos
+      BACKEND_VENTAS_HOST: backend-ventas
+    depends_on:
+      - backend-despachos
+      - backend-ventas
+    networks:
+      - frontend-net
+      - backend-net
+
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+
+volumes:
+  mysql-despachos-data:
+    driver: local
+  mysql-ventas-data:
+    driver: local
