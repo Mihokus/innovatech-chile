@@ -68,13 +68,7 @@ jobs:
           host:     ${{ secrets.EC2_FRONTEND_HOST }}
           username: ec2-user
           key:      ${{ secrets.EC2_SSH_KEY }}
-          envs:     SSH_KEY_B64
           script: |
-            mkdir -p ~/.ssh
-            echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/deploy.pem
-        env:
-          SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY_B64 }}
-
             aws ecr get-login-password --region us-east-1 | \
               docker login --username AWS --password-stdin \
               035167451253.dkr.ecr.us-east-1.amazonaws.com
@@ -130,5 +124,4 @@ jobs:
               docker image prune -f
             "
 
-            rm -f ~/.ssh/deploy.pem
             docker image prune -f
