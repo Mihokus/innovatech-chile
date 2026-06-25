@@ -125,7 +125,7 @@ jobs:
                 --name backend-ventas \
                 --restart unless-stopped \
                 -p 8080:8080 \
-                -e DB_ENDPOINT=10.0.148.238 \
+                -e DB_ENDPOINT=10.0.131.12 \
                 -e DB_PORT=3306 \
                 -e DB_NAME=ventas_db \
                 -e DB_USERNAME=innovatech_user \
