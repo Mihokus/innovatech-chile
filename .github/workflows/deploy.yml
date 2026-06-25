@@ -72,7 +72,7 @@ jobs:
           script: |
             # ── Guardar key para conectar a backends ──
             mkdir -p ~/.ssh
-            echo "$EC2_SSH_KEY" > ~/.ssh/deploy.pem
+            echo "$EC2_SSH_KEY" | sed 's/\\n/\n/g' > ~/.ssh/deploy.pem
             chmod 600 ~/.ssh/deploy.pem
 
             
@@ -104,7 +104,7 @@ jobs:
                 --name backend-despachos \
                 --restart unless-stopped \
                 -p 8081:8081 \
-                -e DB_ENDPOINT=10.0.148.238 \
+                -e DB_ENDPOINT=10.0.131.12 \
                 -e DB_PORT=3306 \
                 -e DB_NAME=despachos_db \
                 -e DB_USERNAME=innovatech_user \
