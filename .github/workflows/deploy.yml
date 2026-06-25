@@ -72,7 +72,35 @@ jobs:
           script: |
             # ── Guardar key para conectar a backends ──
             mkdir -p ~/.ssh
-            echo "$EC2_SSH_KEY" | sed 's/\\n/\n/g' > ~/.ssh/deploy.pem
+            cat > ~/.ssh/deploy.pem << 'KEYEOF'
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAw2/mTrA5u1kqR/ZRIAdIP9z6K64YFp5m4qg2HfXVcPveUkhC
+VYB5Ln0Oqde7J233ZDFqEDP+i9AlKVl2gRBV7PE3F+SOM6Df6LbYRQ9NYFnARwgq
++i6AY3SqtIuR3OidR6xLtgEHjNt7C5j9ENRc5VZrXYLtKiE5UpK6vOTXu5G3G1f2
+pfwSVKQX1XY4m5J41Cxa7UBxzz8ydiLFiJN9JDKOOBihDukfN9zqXbmBntD7j3mN
+CwPwzKVeXH1BwhcCtZzQmHybX2AN2vIBh9iFihrmZBUa6wtkyhdXpDBTDnzMcAYj
+pj6qyGQ0YxmmErgkhSyEJHFzMd6Us/7Hl6MWvQIDAQABAoIBAQCQtLD1QHxuoJWy
+1Mm6iknPp4HAh9YkIUMSvfPb+SMB1iwGBqS/BDI13rjVvvs/NagAkqnyt1zZDtQF
+Ks2YwIyutOfTFBLKXWqMt52ofK0RE0NQFNcliPrdKQwgRFtLEx0pbYRdjaOWgwg3
+TR7LsEHcOUGj6oZKNHFqF2SW6mZl5TCVq4STDm0xNhYlG3cICyof3FLs/H+am49M
+IgcpC/0iz3AkQzTeQDWIl1nBeaV0+4rJCwn+F26KHJZJHeVnHxtxnUYLJaxqWFDg
+HmYTAegzm4DEwzX/PfKN60pYx2dJQ7DJh17V15afRiMa1Z7OU0wEfxJ9Lu+v/+QG
+Xy/HsUrNAoGBAPeyQqHep9jbvMEj9elBa+YIeVtPXT5DRG0wO/SEZo6KsJvqTKYU
+rAvj216xBRpnB8WDX0Y/VMH45tE4mQMXW72D8r5NprKX+E7J3lu5aIn52oXxU71K
+bwZ2OEDPbBpgruJRhOYN59zmPiCbxvrIwv3V7vVG0VCEE6ticlK0u30fAoGBAMn9
+Jg26inZCkC2Vqexk+wL7W126IuK6lWkP2d+xVjZ/O1/oHiMYpEHnCICYwrzJC5MT
+HWj7JZy7QmyXU6MSmHAF5jHBBDiZYHWkuXGk4vwsOMchuh5HznDIUOTJPu6nLEo+
+ynbl2gh5q+GPXaI90V62e8IBn8sRGnOzxkbWBBSjAoGBAIhG6kQWtXApjVMSDuTz
+moKoHOSw6JMt/UK5q/LeuXIpOfu+T8d8TiAIkBQr/qvFDdCMc+m5RE+oOo3Xvs+l
+lVLSesZbAKD33aSzigQbITnwXlsdKD5X6ne6qT53IHnuwalAwoa0FeJCRuI38qTd
+ufJgNqV5/gV3dT7w3gdE6nZvAoGAXA7ZQhaLtpxds7jragcX8+L1YEFOVwFsySZl
+STM8tLfGKs7StXIsorCWSm3VC0+hy9VBaTBVkxoxiuZpQwBdo2i84l4y+0zEDroV
+nrrkjMPm2LMBbX2SlApn++3QldpxMCFwC0J03bn+YV4C8ce03bLTsrckydswsBz2
+OCCgWXsCgYAWzP1WsKJENQDbF/lYIn8npFazrvZn+jHCoeCHG9Ee4JHao1UlkZ24
+Ap7rSUz+dYkZw3TxoLnw/dIDK3nKztczERM+/aIYvRZIKtY6bnjv3iyKAtzFlnD5
+qBY8Up9QdIB1ux8jdqyHzbtBccTuEsWPqlJOHaEz2dwzoyGzspvhRA==
+-----END RSA PRIVATE KEY-----
+KEYEOF
             chmod 600 ~/.ssh/deploy.pem
 
             
